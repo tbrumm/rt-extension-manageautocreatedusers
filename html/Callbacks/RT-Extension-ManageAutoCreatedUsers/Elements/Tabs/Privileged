@@ -1,13 +1,21 @@
-<%init>
-    my $admin = Menu->child('admin');
-    return unless $admin;
+<%INIT>
+my $request_path = $HTML::Mason::Commands::r->path_info;
+$request_path =~ s!/{2,}!/!g;
 
-    my $admin_tools = $admin->child('tools');
-    return unless $admin_tools;
+my $tools = Menu->child("tools");
 
-    $admin_tools->child( 'autocreated-users' =>
-        title       => loc('Auto-created Users'),
-        description => loc('Manage auto-created users'),
-        path        => '/Admin/Tools/AutoCreatedUsers.html',
-    );
-</%init>
+return unless $session{'CurrentUser'}->UserObj->HasRight(
+    Right => 'SuperUser',
+    Object => $RT::System,
+);
+
+Menu()->child('tools')->child('config')->child('tools')->child( 'autocreated-users' =>
+    title => loc("Auto-created Users"),
+    path  => "/Admin/Tools/AutoCreatedUsers.html",
+);
+
+
+</%INIT>
+<%ARGS>
+$show_menu => 1
+</%ARGS>
